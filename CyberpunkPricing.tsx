@@ -65,10 +65,10 @@ const CyberpunkPricing = () => {
         <div className="absolute bottom-0 right-1/4 w-1/2 h-1/2 bg-red-600/5 blur-[100px] rounded-full animate-float" style={{ animationDelay: "1s" }}></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.05)_0,transparent_60%)]"></div>
       </div>
-      
+
       {/* Grid lines for cyberpunk effect with subtle animation */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
-      
+
       <div className="container relative z-10 mx-auto px-4">
         <div className={cn(
           "text-center space-y-4 mb-16 opacity-0",
@@ -82,7 +82,7 @@ const CyberpunkPricing = () => {
             Choose the plan that fits your content creation needs. All plans include access to our core AI features.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Free Plan */}
           <div 
@@ -94,7 +94,7 @@ const CyberpunkPricing = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-clipvobe-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="absolute inset-0 border border-clipvobe-cyan/20 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 scale-[1.02] group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(0,255,255,0.15)]"></div>
-            
+
             <div className="p-8 relative">
               <h3 className="text-xl font-bold text-white mb-2">Free Plan</h3>
               <div className="flex items-end mb-6">
@@ -102,7 +102,7 @@ const CyberpunkPricing = () => {
                 <span className="text-clipvobe-gray-400 ml-2">/month</span>
               </div>
               <p className="text-clipvobe-gray-300 mb-6">Perfect for trying out the platform</p>
-              
+
               <ul className="space-y-4 mb-8">
                 {features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-clipvobe-gray-200 group-hover:translate-x-1 transition-transform duration-300" style={{ transitionDelay: `${idx * 0.05}s` }}>
@@ -111,7 +111,7 @@ const CyberpunkPricing = () => {
                   </li>
                 ))}
               </ul>
-              
+
               <Button 
                 variant="outline" 
                 className="w-full group-hover:bg-clipvobe-cyan group-hover:text-clipvobe-dark group-hover:border-clipvobe-cyan transition-all duration-500 ripple"
@@ -120,7 +120,7 @@ const CyberpunkPricing = () => {
               </Button>
             </div>
           </div>
-          
+
           {/* Basic Plan */}
           <div 
             className={cn(
@@ -131,7 +131,7 @@ const CyberpunkPricing = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-clipvobe-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="absolute inset-0 border border-clipvobe-cyan/20 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 scale-[1.02] group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(0,255,255,0.15)]"></div>
-            
+
             <div className="p-8 relative">
               <h3 className="text-xl font-bold text-white mb-2">Basic Plan</h3>
               <div className="flex items-end mb-6">
@@ -139,7 +139,7 @@ const CyberpunkPricing = () => {
                 <span className="text-clipvobe-gray-400 ml-2">/month</span>
               </div>
               <p className="text-clipvobe-gray-300 mb-6">Perfect for hobbyists and new creators</p>
-              
+
               <ul className="space-y-4 mb-8">
                 {features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-clipvobe-gray-200 group-hover:translate-x-1 transition-transform duration-300" style={{ transitionDelay: `${idx * 0.05}s` }}>
@@ -148,16 +148,34 @@ const CyberpunkPricing = () => {
                   </li>
                 ))}
               </ul>
-              
+
               <Button 
                 variant="outline" 
                 className="w-full group-hover:bg-clipvobe-cyan group-hover:text-clipvobe-dark group-hover:border-clipvobe-cyan transition-all duration-500 ripple"
+                onClick={async () => {
+                  const stripe = await stripePromise;
+                  if (!stripe) return;
+
+                  const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      priceId: process.env.VITE_STRIPE_BASIC_PRICE_ID,
+                      plan: 'basic'
+                    }),
+                  });
+
+                  const { sessionId } = await response.json();
+                  await stripe.redirectToCheckout({ sessionId });
+                }}
               >
                 Get Started
               </Button>
             </div>
           </div>
-          
+
           {/* Pro Plan (Popular) */}
           <div 
             className={cn(
@@ -168,12 +186,12 @@ const CyberpunkPricing = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-clipvobe-cyan/10 to-transparent opacity-70 transition-opacity duration-500"></div>
             <div className="absolute inset-0 border border-clipvobe-cyan/40 rounded-xl opacity-70 group-hover:opacity-100 transition-all duration-500 scale-[1.01] group-hover:scale-105 group-hover:shadow-[0_0_30px_rgba(0,255,255,0.25)]"></div>
-            
+
             {/* Popular badge with enhanced animation */}
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-clipvobe-cyan text-clipvobe-dark px-4 py-1 rounded-full text-sm font-semibold z-10 shadow-[0_0_15px_rgba(0,255,255,0.5)] animate-pulse-strong">
               POPULAR
             </div>
-            
+
             <div className="p-8 relative">
               <h3 className="text-xl font-bold text-white mb-2">Pro Plan</h3>
               <div className="flex items-end mb-6">
@@ -181,7 +199,7 @@ const CyberpunkPricing = () => {
                 <span className="text-clipvobe-gray-400 ml-2">/month</span>
               </div>
               <p className="text-clipvobe-gray-300 mb-6">Ideal for growing YouTube channels</p>
-              
+
               <ul className="space-y-4 mb-8">
                 {features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-clipvobe-gray-200 group-hover:translate-x-1 transition-transform duration-300" style={{ transitionDelay: `${idx * 0.05}s` }}>
@@ -190,7 +208,7 @@ const CyberpunkPricing = () => {
                   </li>
                 ))}
               </ul>
-              
+
               <Button 
                 variant="primary" 
                 className="w-full shadow-[0_0_20px_rgba(0,255,255,0.3)] group-hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] transition-all duration-500 ripple animate-pulse-strong"
@@ -200,7 +218,7 @@ const CyberpunkPricing = () => {
             </div>
           </div>
         </div>
-        
+
         <div className={cn(
           "mt-16 text-center text-clipvobe-gray-400 opacity-0",
           inView ? "animate-fade-in-up" : ""
