@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Menu, 
@@ -10,7 +9,7 @@ interface TopBarProps {
   toggleSidebar: () => void;
   showProfile: boolean;
   setShowProfile: (show: boolean) => void;
-  user: { name: string; email: string } | null;
+  user: { name: string; email: string; subscription?: { plan?: string } } | null;
 }
 
 const TopBar: React.FC<TopBarProps> = ({ 
@@ -28,7 +27,7 @@ const TopBar: React.FC<TopBarProps> = ({
         >
           <Menu size={20} />
         </button>
-        
+
         <div className="relative">
           <input
             type="text"
@@ -38,13 +37,13 @@ const TopBar: React.FC<TopBarProps> = ({
           <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
         </div>
       </div>
-      
+
       <div className="flex items-center space-x-4">
         <button className="relative text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-gray-800">
           <Bell size={20} />
           <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
         </button>
-        
+
         {user && (
           <button 
             className="flex items-center space-x-2 text-gray-400 hover:text-white pr-2 pl-1 py-1 rounded hover:bg-gray-800" 
@@ -53,7 +52,12 @@ const TopBar: React.FC<TopBarProps> = ({
             <div className="w-7 h-7 rounded-full bg-clipvobe-cyan/20 flex items-center justify-center text-clipvobe-cyan">
               {user.name.charAt(0)}
             </div>
-            <span className="text-sm">{user.name.split(' ')[0]}</span>
+            <div className="flex items-center">
+              <span className="text-sm">{user.name.split(' ')[0]}</span>
+              <span className="text-sm font-medium ml-2">
+                  {user.subscription?.plan?.toUpperCase() || 'Free'} Plan
+                </span>
+            </div>
           </button>
         )}
       </div>

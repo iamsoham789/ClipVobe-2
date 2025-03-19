@@ -115,6 +115,36 @@ const CyberpunkPricing = () => {
               <Button 
                 variant="outline" 
                 className="w-full group-hover:bg-clipvobe-cyan group-hover:text-clipvobe-dark group-hover:border-clipvobe-cyan transition-all duration-500 ripple"
+                onClick={async () => {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    toast.error('Please sign in first');
+                    return;
+                  }
+                  try {
+                    const response = await fetch('/api/create-checkout-session', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        priceId: process.env.VITE_STRIPE_FREE_PRICE_ID,
+                        plan: 'free',
+                        userId: user.id
+                      }),
+                    });
+                    
+                    if (!response.ok) throw new Error('Payment initialization failed');
+                    
+                    const { sessionId } = await response.json();
+                    const stripe = await loadStripe(process.env.VITE_STRIPE_PUBLISHABLE_KEY);
+                    if (!stripe) throw new Error('Stripe failed to load');
+                    
+                    await stripe.redirectToCheckout({ sessionId });
+                  } catch (error) {
+                    toast.error('Payment initialization failed. Please try again.');
+                  }
+                }}
               >
                 Get Started
               </Button>
