@@ -8,21 +8,81 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 )
 
+async function resetMonthlyUsage(userId) {
+  try {
+    // Replace with your actual Supabase function call to reset usage counters
+    // This is a placeholder, adapt to your Supabase schema and functions.  Example below assumes a table called 'usage'
+    const { error } = await supabase
+      .from('usage')
+      .update({ usage_count: 0 })
+      .eq('user_id', userId);
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error resetting monthly usage:', error);
+    throw error; // Re-throw to be caught by createSubscription
+  }
+}
+
+async function initializeUsageCounters(userId) {
+  try {
+    // Replace with your actual Supabase function call to initialize usage counters
+    // This is a placeholder, adapt to your Supabase schema and functions. Example below assumes a table called 'usage'
+    const { error } = await supabase
+      .from('usage')
+      .insert([{ user_id: userId, usage_count: 0 }]);
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error initializing usage counters:', error);
+    throw error; // Re-throw to be caught by createSubscription
+  }
+}
+
+
 async function createSubscription(userId, plan) {
   try {
-    //  Replace with your actual Supabase function call to create a subscription
-    // This is a placeholder, adapt to your Supabase schema and functions
-    const { data, error } = await supabase
+    // Check if user already has a subscription
+    const { data: existingSub } = await supabase
       .from('subscriptions')
-      .insert([{ user_id: userId, plan: plan, status: 'active', expires_at: new Date(Date.now() + 2592000000) }]) // Adding expiry date (1 month)
+      .select('*')
+      .eq('user_id', userId)
+      .single();
 
-    if (error) {
-      console.error('Error creating subscription:', error);
-      return false;
+    if (existingSub) {
+      // Update existing subscription
+      const { error: updateError } = await supabase
+        .from('subscriptions')
+        .update({ 
+          plan: plan,
+          status: 'active',
+          expires_at: new Date(Date.now() + 2592000000),
+          renewed_at: new Date()
+        })
+        .eq('user_id', userId);
+
+      if (updateError) throw updateError;
+
+      // Reset usage counters
+      await resetMonthlyUsage(userId);
+    } else {
+      // Create new subscription
+      const { error: insertError } = await supabase
+        .from('subscriptions')
+        .insert([{ 
+          user_id: userId, 
+          plan: plan, 
+          status: 'active', 
+          expires_at: new Date(Date.now() + 2592000000),
+          renewed_at: new Date()
+        }]);
+
+      if (insertError) throw insertError;
+
+      // Initialize usage counters
+      await initializeUsageCounters(userId);
     }
     return true;
   } catch (error) {
-    console.error('Error creating subscription:', error);
+    console.error('Error managing subscription:', error);
     return false;
   }
 }

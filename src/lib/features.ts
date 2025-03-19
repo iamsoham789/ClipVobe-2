@@ -52,6 +52,26 @@ export async function updateFeatureUsage(
   return !error;
 }
 
+export async function initializeUsageCounters(userId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('feature_usage')
+    .insert([{
+      user_id: userId,
+      videoTitles: 0,
+      videoDescriptions: 0,
+      hashtagSets: 0,
+      ideas: 0,
+      tweets: 0,
+      linkedinPosts: 0,
+      redditPosts: 0,
+      communityPosts: 0,
+      scripts: 0,
+      lastResetDate: new Date().toISOString()
+    }]);
+
+  return !error;
+}
+
 export async function resetMonthlyUsage(userId: string): Promise<boolean> {
   const { error } = await supabase
     .from('feature_usage')
