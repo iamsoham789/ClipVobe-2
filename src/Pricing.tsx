@@ -29,6 +29,16 @@ async function createSubscription(userId, plan) {
 
 
 function Pricing() {
+  const [stripePromise, setStripePromise] = useState(null);
+
+  useEffect(() => {
+    const loadStripe = async () => {
+      const stripe = await import('@stripe/stripe-js');
+      setStripePromise(stripe.loadStripe(process.env.VITE_STRIPE_PUBLISHABLE_KEY));
+    }
+    loadStripe();
+  }, []);
+
   return (
     <div>
       {/* ... other pricing plan components ... */}
@@ -57,6 +67,41 @@ function Pricing() {
             }
           }}
           className="w-full bg-pink-500 text-black py-2 rounded-lg hover:bg-pink-600 transition duration-300"
+        >
+          Get Started
+        </button>
+      </div>
+      <div className="border p-4 rounded-lg shadow-md mb-4">
+        <h3 className="text-xl font-bold mb-2">Pro Plan</h3>
+        <p className="text-gray-700 mb-4">
+          Unlock advanced features with our Pro plan.
+        </p>
+        <button
+          onClick={async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+              toast.error('Please sign in first');
+              return;
+            }
+
+            const stripe = await stripePromise;
+            if (!stripe) return;
+
+            const response = await fetch('/api/create-checkout-session', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                priceId: process.env.VITE_STRIPE_PRO_PRICE_ID,
+                plan: 'pro'
+              }),
+            });
+
+            const { sessionId } = await response.json();
+            await stripe.redirectToCheckout({ sessionId });
+          }}
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
         >
           Get Started
         </button>
