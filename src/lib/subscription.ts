@@ -1,5 +1,5 @@
 
-import { supabase } from '../integrations/supabase/client';
+import { supabase } from './integrations/supabase/client';
 
 export interface Subscription {
   user_id: string;
