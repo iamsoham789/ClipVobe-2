@@ -59,25 +59,23 @@ const Auth = () => {
             data: {
               name: name || email.split('@')[0],
             },
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         });
         
         if (error) throw error;
+
+        // Show success message and switch to sign in
+        toast.success(
+          'Registration successful! Please check your email to confirm your account.',
+          { duration: 6000 }
+        );
         
-        // For backward compatibility with the existing demo
-        localStorage.setItem('clipvobe-user', JSON.stringify({ 
-          email, 
-          name: name || email.split('@')[0] 
-        }));
-        
-        if (data.session) {
-          // User is signed in immediately
-          navigate('/dashboard');
-        } else {
-          // Email confirmation is required
-          toast.success('Check your email for the confirmation link');
-          setIsSignIn(true);
-        }
+        // Clear the form
+        setEmail('');
+        setPassword('');
+        setName('');
+        setIsSignIn(true);
       }
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please try again.');
