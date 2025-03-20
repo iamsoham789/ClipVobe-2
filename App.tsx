@@ -6,8 +6,8 @@ import Index from './src/pages/Index';
 import Auth from './src/pages/Auth';
 import Dashboard from './src/pages/Dashboard';
 import NotFound from './src/pages/NotFound';
-import Pricing from './components/src/pages/Pricing';
-import Blog from './components/src/pages/src/pages/Blog';
+import Pricing from './src/components/pricing/Pricing';
+import Blog from './src/pages/Blog';
 
 function App() {
   return (
