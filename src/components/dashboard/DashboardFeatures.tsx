@@ -26,22 +26,22 @@ const DashboardFeatures: React.FC<DashboardFeaturesProps> = ({
     activeSubItem,
     handleNavigation: !!handleNavigation
   });
-  
+
   // Add error boundary
   try {
     switch (activeItem) {
       case 'dashboard':
         return <DashboardOverview handleNavigation={handleNavigation} />;
-      
+
       case 'video-titles':
         return <TitleGenerator handleNavigation={handleNavigation} />;
-      
+
       case 'video-descriptions':
         return <DescriptionGenerator handleNavigation={handleNavigation} />;
-        
+
       case 'hashtags':
         return <HashtagGenerator handleNavigation={handleNavigation} />;
-        
+
       case 'video-ideas':
         return <VideoIdeasGenerator handleNavigation={handleNavigation} />;
 
@@ -54,7 +54,7 @@ const DashboardFeatures: React.FC<DashboardFeaturesProps> = ({
 
       case 'youtube-community-post-generator':
         return <YouTubeCommunityPostGenerator handleNavigation={handleNavigation} />;
-        
+
       case 'reddit-post-generator':
         return <RedditPostGenerator handleNavigation={handleNavigation} />;
 
@@ -66,7 +66,7 @@ const DashboardFeatures: React.FC<DashboardFeaturesProps> = ({
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-white">Settings</h2>
             <div className="glass-card rounded-xl p-6">
-        
+
           <div className="flex items-center justify-center h-full text-gray-400">
             Select a feature from the sidebar
           </div>
@@ -74,10 +74,10 @@ const DashboardFeatures: React.FC<DashboardFeaturesProps> = ({
             </div>
           </div>
         );
-        
+
       default:
         console.log('No matching case for activeItem:', activeItem);
-        
+
     }
   } catch (error) {
     console.error('Error in DashboardFeatures:', error);

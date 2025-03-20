@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Home, Lightbulb, DollarSign, FileText, LayoutDashboard, HelpCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
-import FeaturePopup from './FeaturePopup'; // Import the FeaturePopup component
+import { FeaturePopup } from './features/FeaturePopup'; // Import the FeaturePopup component
 
 interface NavItem {
   name: string;

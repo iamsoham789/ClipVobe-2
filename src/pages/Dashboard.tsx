@@ -21,7 +21,7 @@ import {
   User,
   ScrollText
 } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn } from '../utils/utils';
 import SidebarNav from '../components/dashboard/SidebarNav';
 import DashboardFeatures from '../components/dashboard/DashboardFeatures';
 import { Area, AreaChart as RechartsArea, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
